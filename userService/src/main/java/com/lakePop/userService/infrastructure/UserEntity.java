@@ -3,6 +3,8 @@ package com.lakePop.userService.infrastructure;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Set;
+
 
 @Data
 @Entity
@@ -22,5 +24,16 @@ public class UserEntity {
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "type") //buyer or shop
+    private String type;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles; //Admin, User
 
 }
