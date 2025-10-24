@@ -82,8 +82,4 @@ public class UserController {
         }
     }
 
-    @GetMapping("role/{role}")
-    private ResponseEntity<?> findUsersByRole(@PathVariable String role)
-
-
 }
