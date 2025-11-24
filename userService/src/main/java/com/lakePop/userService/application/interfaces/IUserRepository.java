@@ -1,5 +1,6 @@
-package com.lakePop.userService.infrastructure;
+package com.lakePop.userService.application.interfaces;
 
+import com.lakePop.userService.infrastructure.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

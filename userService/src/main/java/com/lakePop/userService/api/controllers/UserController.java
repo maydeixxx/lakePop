@@ -1,13 +1,17 @@
 package com.lakePop.userService.api.controllers;
 
+import com.lakePop.userService.api.models.UserAuthDTO;
 import com.lakePop.userService.api.models.UserDTO;
 import com.lakePop.userService.api.models.UserUpdateDTO;
-import com.lakePop.userService.application.IUserMapper;
+import com.lakePop.userService.application.JwtService;
+import com.lakePop.userService.application.auth.AuthService;
+import com.lakePop.userService.application.interfaces.IUserMapper;
 import com.lakePop.userService.application.UserService;
 import com.lakePop.userService.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,10 +21,12 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
+    private final AuthService authService;
     private final IUserMapper mapper;
 
-    @GetMapping("all")
+    @GetMapping("/all")
     private ResponseEntity<?> findAllUsers() {
         try {
             List<User> allUsers = userService.findAllUsers();
@@ -30,21 +36,28 @@ public class UserController {
         }
     }
 
-    @PostMapping("create")
+    @PostMapping("/token")
+    private ResponseEntity<?> authenticateUser(@RequestBody UserAuthDTO userData) {
+        String token = authService.authenticate(userData);
+
+        if (token == null) {
+            return ResponseEntity.badRequest().body("Не удалось войти");
+        }
+
+        return ResponseEntity.ok(token);
+    }
+
+    @PostMapping("/create")
     private ResponseEntity<?> createUser(@RequestBody UserDTO user) {
         try {
-            User userByEmail = userService.findUserByEmail(user.getEmail());
-            if (userByEmail != null) {
-                return ResponseEntity.badRequest().body("User with email [" + user.getEmail() + "] already exists");
-            }
-            userService.createUser(mapper.userDTOtoUser(user));
+            authService.regUser(user);
             return ResponseEntity.ok().body("User successfully saved");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR: " + e.getMessage());
         }
     }
 
-    @PatchMapping("update")
+    @PatchMapping("/update")
     private ResponseEntity<?> updateUser(@RequestBody UserUpdateDTO userUpdateDTO) {
         try {
             userService.updateUser(userUpdateDTO);
@@ -54,7 +67,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("id/{id}")
+    @GetMapping("/id/{id}")
     private ResponseEntity<?> findUserById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok().body(mapper.userToUserDTO(userService.findUserById(id)));
@@ -63,7 +76,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("email/{email}")
+    @GetMapping("/email/{email}")
     private ResponseEntity<?> findUserByEmail(@PathVariable String email) {
         try {
             return ResponseEntity.ok().body(mapper.userToUserDTO(userService.findUserByEmail(email)));
@@ -72,7 +85,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     private ResponseEntity<?> deleteUserById(@PathVariable Long id) {
         try {
             userService.deleteUserById(id);

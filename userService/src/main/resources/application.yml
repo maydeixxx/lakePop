@@ -11,5 +11,10 @@ spring:
     hibernate:
       ddl-auto: create
 
+  jwt:
+    token:
+      lifetime: 1h
+      signing-key: c2FqaGdkSllBU1VZZHV5eXVzYWRnYW9pdXNkaGl1Kyst
+
 server:
   port: 8081

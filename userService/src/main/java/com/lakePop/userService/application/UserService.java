@@ -1,10 +1,11 @@
 package com.lakePop.userService.application;
 
 import com.lakePop.userService.api.models.UserUpdateDTO;
+import com.lakePop.userService.application.interfaces.IUserMapper;
+import com.lakePop.userService.application.interfaces.IUserService;
 import com.lakePop.userService.domain.User;
-import com.lakePop.userService.infrastructure.Role;
 import com.lakePop.userService.infrastructure.UserEntity;
-import com.lakePop.userService.infrastructure.IUserRepository;
+import com.lakePop.userService.application.interfaces.IUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +30,7 @@ public class UserService implements IUserService {
                 case "username" -> user.setUsername(userUpdateDTO.getNewUsername());
                 case "password" -> user.setPassword(userUpdateDTO.getNewPassword());
                 case "email" -> user.setEmail(userUpdateDTO.getNewEmail());
-                default ->
-                        throw new IllegalArgumentException("unknown field to update [" + userUpdateDTO.getField() + "]");
+                default -> throw new IllegalArgumentException("unknown field to update [" + userUpdateDTO.getField() + "]");
             }
 
             repository.saveAndFlush(mapper.userToUserEntity(user));

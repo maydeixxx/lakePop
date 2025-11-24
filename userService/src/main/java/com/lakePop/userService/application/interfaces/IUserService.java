@@ -1,4 +1,4 @@
-package com.lakePop.userService.application;
+package com.lakePop.userService.application.interfaces;
 
 import com.lakePop.userService.api.models.UserUpdateDTO;
 import com.lakePop.userService.domain.User;
