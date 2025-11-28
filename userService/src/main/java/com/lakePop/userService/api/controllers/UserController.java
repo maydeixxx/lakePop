@@ -3,7 +3,6 @@ package com.lakePop.userService.api.controllers;
 import com.lakePop.userService.api.models.UserAuthDTO;
 import com.lakePop.userService.api.models.UserDTO;
 import com.lakePop.userService.api.models.UserUpdateDTO;
-import com.lakePop.userService.application.JwtService;
 import com.lakePop.userService.application.auth.AuthService;
 import com.lakePop.userService.application.interfaces.IUserMapper;
 import com.lakePop.userService.application.UserService;
@@ -11,7 +10,6 @@ import com.lakePop.userService.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,7 +39,7 @@ public class UserController {
         String token = authService.authenticate(userData);
 
         if (token == null) {
-            return ResponseEntity.badRequest().body("Не удалось войти");
+            return ResponseEntity.badRequest().body("Error while login");
         }
 
         return ResponseEntity.ok(token);

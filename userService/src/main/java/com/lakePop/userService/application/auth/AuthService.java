@@ -26,7 +26,7 @@ public class AuthService {
         User userByEmail = userService.findUserByEmail(userData.getEmail());
 
         if (userByEmail != null) {
-            throw new IllegalArgumentException(String.format("Пользователь с email [%s] уже существует", userData.getEmail()));
+            throw new IllegalArgumentException(String.format("User with email [%s] already exists", userData.getEmail()));
         }
 
         String encodedPassword = passwordEncoder.encode(userData.getPassword());
@@ -34,7 +34,7 @@ public class AuthService {
 
         userService.createUser(mapper.userDTOtoUser(userData));
 
-        log.info("Зарегистрирован пользователь {}", userData);
+        log.info("User was successfully registered {}", userData);
     }
 
     public String authenticate(UserAuthDTO userData) {
@@ -42,11 +42,11 @@ public class AuthService {
         User userByEmail = userService.findUserByEmail(userData.getEmail());
 
         if (userByEmail == null) {
-            throw new IllegalArgumentException(String.format("Пользователь с email [%s] не найден", userData.getEmail()));
+            throw new IllegalArgumentException(String.format("User with email [%s] not found", userData.getEmail()));
         }
 
         if (!passwordEncoder.matches(userData.getPassword(), userByEmail.getPassword())) {
-            throw new IllegalArgumentException(String.format("Пароль для email [%s] неправильный", userData.getEmail()));
+            throw new IllegalArgumentException(String.format("Password for [%s] is wrong", userData.getEmail()));
         }
 
         return jwtService.generateToken(userByEmail);

@@ -35,9 +35,9 @@ public class UserService implements IUserService {
 
             repository.saveAndFlush(mapper.userToUserEntity(user));
         } catch (Exception e) {
-            log.error("Не удалось обновить юзера {}. Error: {}", userUpdateDTO.getId(), e.getMessage());
+            log.error("Error while updating user {}. Error: {}", userUpdateDTO.getId(), e.getMessage());
         }
-        log.info("Успешно обновили юзера");
+        log.info("User was successfully updated");
     }
 
     @Override
@@ -60,9 +60,9 @@ public class UserService implements IUserService {
         try {
             repository.save(mapper.userToUserEntity(user));
         } catch (Exception e) {
-            log.error("Не удалось сохранить пользователя. Error: {}", e.getMessage());
+            log.error("Error while saving user. Error: {}", e.getMessage());
         }
-        log.info("Сохранили юзера [ {} ]", user);
+        log.info("User was successfully saved [ {} ]", user);
     }
 
     @Override
@@ -71,9 +71,9 @@ public class UserService implements IUserService {
             User userById = findUserById(id);
             repository.delete(mapper.userToUserEntity(userById));
         } catch (Exception e) {
-            log.error("Не удалось удалить пользователя {}", id);
+            log.error("Error while deleting user {}", id);
         } finally {
-            log.info("Удалили пользователя {}", id);
+            log.info("User was successfully deleted {}", id);
         }
     }
 }

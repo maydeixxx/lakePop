@@ -16,6 +16,7 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "roleName")
