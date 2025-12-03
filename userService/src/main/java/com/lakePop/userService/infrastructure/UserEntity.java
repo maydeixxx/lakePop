@@ -36,4 +36,7 @@ public class UserEntity {
     )
     private Set<Role> roles; //Admin, User
 
+    @Column(name = "countOfSold")
+    private Integer countOfSold; //count of sold items
+
 }

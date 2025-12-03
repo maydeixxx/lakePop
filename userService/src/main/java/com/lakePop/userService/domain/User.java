@@ -20,4 +20,6 @@ public class User {
 
     private Set<Role> roles; //Admin, User
 
+    private Integer countOfSold; //count of sold items
+
 }
