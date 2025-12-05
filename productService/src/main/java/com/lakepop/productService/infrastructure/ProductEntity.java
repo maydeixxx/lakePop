@@ -3,6 +3,7 @@ package com.lakepop.productService.infrastructure;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -13,18 +14,23 @@ public class ProductEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
-    @Column
+    @Column(nullable = false, name = "productName")
     private String productName;
 
-    @Column
+    @Column(name = "productDescription")
     private String productDescription;
 
-    @Column
+    @Column(name = "productPhoto")
     private String productPhoto;
 
-    @Column
+    @Column(nullable = false, name = "productPrice")
     private String productPrice;
 
-    @Column
+    @Column(name = "reviews")
+    @ElementCollection
+    private List<String> reviews;
+
+    @ElementCollection
+    @Column(name = "productCategory")
     private Set<String> productCategory;
 }

@@ -10,7 +10,7 @@ public class ProducerService {
     private final KafkaTemplate<String, String> producer;
 
     public void sendRequestProductReview(String productId, String review) {
-        producer.send("product_review", productId, review);
+        producer.send("product_review", 0, productId, review);
     }
 
 }

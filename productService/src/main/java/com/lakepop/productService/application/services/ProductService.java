@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
+//ДОБАВЬ КОММЕНТАРИИ И ОБРАБОТКУ ОШИБОК С ЛОГИРОВАНИЕМ ПЖ!!!!
 @Service
 @RequiredArgsConstructor
 public class ProductService implements IProductService {
@@ -33,7 +34,7 @@ public class ProductService implements IProductService {
         ProductEntity product = productRepository.findByProductId(productId);
 
         if(product == null){
-            throw new IllegalArgumentException("Product with id - " + productId + "not found.");
+            throw new NullPointerException("Product with id - " + productId + "not found.");
         }
 
         updates.forEach((key, value) -> {
@@ -60,6 +61,19 @@ public class ProductService implements IProductService {
         return allProducts.stream()
                 .map(mapper::productEntityToProduct)
                 .toList();
+    }
+
+    public void handleReview(Long productId, String review) {
+        try {
+            Product productById = getProductById(productId);
+            List<String> reviews = productById.getReviews();
+            reviews.add(review);
+
+            productById.setReviews(reviews);
+            productRepository.saveAndFlush(mapper.productToProductEntity(productById));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
