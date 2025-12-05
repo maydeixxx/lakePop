@@ -8,6 +8,15 @@
 		<version>3.5.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
+    <packaging>
+        pom
+    </packaging>
+
+    <modules>
+        <module>productService</module>
+    </modules>
+
 	<groupId>com.lakePop</groupId>
 	<artifactId>lakePop</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -27,7 +36,7 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>25</java.version>
+		<java.version>21</java.version>
 	</properties>
 	<dependencies>
 		<dependency>

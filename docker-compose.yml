@@ -1,0 +1,16 @@
+services:
+  lakepop-lakepop_postgres-1:
+    image: postgres:17.4
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=127001
+      - POSTGRES_DB=lakepop_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d  # Для скриптов инициализации
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
