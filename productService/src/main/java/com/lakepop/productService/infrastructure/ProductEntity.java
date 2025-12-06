@@ -27,10 +27,10 @@ public class ProductEntity {
     private String productPrice;
 
     @Column(name = "reviews")
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> reviews;
 
-    @ElementCollection
     @Column(name = "productCategory")
+    @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> productCategory;
 }

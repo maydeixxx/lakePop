@@ -23,7 +23,7 @@ services:
     depends_on:
       - zookeeper
 
-  lakepop-lakepop_postgres-1:
+  lakepop_postgres:
     image: postgres:17.4
     environment:
       - POSTGRES_USER=postgres
@@ -32,13 +32,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - lakepop_postgres:/var/lib/postgresql/data
       - ./init-scripts:/docker-entrypoint-initdb.d  # Для скриптов инициализации
     restart: unless-stopped
 
 volumes:
   maven-repo:
-  userPostgres_data:
-  redis_data:
-  adPostgres_data:
+  lakepop_postgres:
   kafka_data:

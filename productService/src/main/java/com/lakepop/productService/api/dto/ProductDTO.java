@@ -7,7 +7,6 @@ import java.util.Set;
 
 @Data
 public class ProductDTO {
-    private Long productId;
 
     private String productName;
 
@@ -20,4 +19,5 @@ public class ProductDTO {
     private List<String> reviews;
 
     private Set<String> productCategory;
+
 }

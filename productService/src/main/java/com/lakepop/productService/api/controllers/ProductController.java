@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,7 @@ public class ProductController {
     private final IProductMapper mapper;
 
     @GetMapping("/product/{productId}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long productId){
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long productId) {
         Product product = service.getProductById(productId);
         ProductDTO productDTO = mapper.productToProductDto(product);
 
@@ -29,7 +28,7 @@ public class ProductController {
     }
 
     @GetMapping("/all_products")
-    public ResponseEntity<List<ProductDTO>> getAllProducts(){
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
         List<Product> products = service.getAllProducts();
         List<ProductDTO> productDTOS = products.stream()
                 .map(mapper::productToProductDto)
@@ -39,26 +38,20 @@ public class ProductController {
     }
 
     @DeleteMapping("/delete_product/{productId}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId){
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         service.deleteProductById(productId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/update_product/{productId}")
-    public ResponseEntity<Void> updateProduct(@PathVariable Long productId, @RequestBody Map<String, Object> updates){
+    public ResponseEntity<Void> updateProduct(@PathVariable Long productId, @RequestBody Map<String, Object> updates) {
         service.updateProduct(productId, updates);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/create_product/")
-    public ResponseEntity<Void> createProduct(@RequestBody ProductDTO productDTO){
-        Product product = service.getProductById(productDTO.getProductId());
-
-        if(product != null){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "product already exists.");
-        } else {
-            service.createProduct(mapper.productDtoToProduct(productDTO));
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }
+    public ResponseEntity<Void> createProduct(@RequestBody ProductDTO productDTO) {
+        service.createProduct(mapper.productDtoToProduct(productDTO));
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
