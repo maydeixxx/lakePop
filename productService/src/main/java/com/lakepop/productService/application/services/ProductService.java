@@ -46,6 +46,7 @@ public class ProductService implements IProductService {
                 case "productDescription" -> product.setProductDescription((String) value);
                 case "productPrice" -> product.setProductPrice((String) value);
                 case "productPhoto" -> product.setProductPhoto((String) value);
+                default -> log.error("Unknown field to update");
             }
         });
 
@@ -69,7 +70,7 @@ public class ProductService implements IProductService {
     /**
      * Метод для добавления отзыва к товару
      * @param productId id продукта
-     * @param review отзыв полученный от kafka
+     * @param review отзыв полученный из kafka
      */
     public void handleReview(Long productId, String review) {
         if (productId == null) {
