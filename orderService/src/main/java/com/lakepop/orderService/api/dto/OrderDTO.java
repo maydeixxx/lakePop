@@ -10,6 +10,8 @@ public class OrderDTO {
 
     private LocalDateTime timeStamp;
 
+    private Long productId;
+
     private BigDecimal amount;
 
     private String currency;

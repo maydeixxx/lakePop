@@ -16,10 +16,13 @@ public class OrderEntity {
     @Column(name = "date")
     private LocalDateTime timeStamp;
 
+    @Column(name = "productId")
+    private Long productId;
+
     @Column(name = "amount")
     private BigDecimal amount;
 
-    @Column("currency")
+    @Column(name = "currency")
     private String currency;
 
 }
