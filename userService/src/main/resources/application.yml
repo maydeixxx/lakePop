@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: userService
+
+  datasource:
+    username: postgres
+    password: admin
+    url: jdbc:postgresql://localhost:5432/lakepop_db
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  jwt:
+    token:
+      lifetime: 1h
+      signing-key: c2FqaGdkSllBU1VZZHV5eXVzYWRnYW9pdXNkaGl1Kyst
+
+server:
+  port: 8081
