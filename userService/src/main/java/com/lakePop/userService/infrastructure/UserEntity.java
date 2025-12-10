@@ -3,6 +3,7 @@ package com.lakePop.userService.infrastructure;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -38,5 +39,9 @@ public class UserEntity {
 
     @Column(name = "countOfSold")
     private Integer countOfSold; //count of sold items
+
+    @Column(name = "orders")
+    @ElementCollection
+    private List<String> orders;
 
 }

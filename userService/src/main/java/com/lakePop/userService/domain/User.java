@@ -3,6 +3,7 @@ package com.lakePop.userService.domain;
 import com.lakePop.userService.infrastructure.Role;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -21,5 +22,7 @@ public class User {
     private Set<Role> roles; //Admin, User
 
     private Integer countOfSold; //count of sold items
+
+    private List<String> orders;
 
 }

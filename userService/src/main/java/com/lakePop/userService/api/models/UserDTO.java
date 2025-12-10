@@ -4,6 +4,7 @@ import com.lakePop.userService.infrastructure.Role;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -23,5 +24,7 @@ public class UserDTO {
     private Set<Role> roles; //Admin, User
 
     private Integer countOfSold; //count of sold items
+
+    private List<String> orders;
 
 }
