@@ -6,6 +6,7 @@ import com.lakepop.productService.application.interfaces.IProductService;
 import com.lakepop.productService.domain.Product;
 import com.lakepop.productService.infrastructure.ProductEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductService implements IProductService {
     private final IProductRepository productRepository;
     private final IProductMapper mapper;
@@ -30,28 +32,34 @@ public class ProductService implements IProductService {
 
     @Override
     public void updateProduct(Long productId, Map<String, Object> updates) {
-        ProductEntity product = productRepository.findByProductId(productId);
+        try {
+            ProductEntity product = productRepository.findByProductId(productId);
 
-        if(product == null){
-            throw new IllegalArgumentException("Product with id - " + productId + "not found.");
-        }
-
-        updates.forEach((key, value) -> {
-            switch (key) {
-                case "productName" -> product.setProductName((String) value);
-                case "productDescription" -> product.setProductDescription((String) value);
-                case "productPrice" -> product.setProductPrice((String) value);
-                case "productPhoto" -> product.setProductPhoto((String) value);
+            if(product == null){
+                throw new IllegalArgumentException("Product with id - " + productId + "not found.");
             }
-        });
 
-        productRepository.save(product);
+            updates.forEach((key, value) -> {
+                switch (key) {
+                    case "productName" -> product.setProductName((String) value);
+                    case "productDescription" -> product.setProductDescription((String) value);
+                    case "productPrice" -> product.setProductPrice((String) value);
+                    case "productPhoto" -> product.setProductPhoto((String) value);
+                }
+            });
+
+            productRepository.save(product);
+            log.info("Product Successfully update.");
+        } catch (Exception e) {
+            log.error("Error while updating product. Error: {}", e.getMessage());
+        }
     }
 
     @Override
     @Transactional
     public void deleteProductById(Long productId) {
         productRepository.deleteProductByProductId(productId);
+        log.info("Product successfully deleted.");
     }
 
     @Override

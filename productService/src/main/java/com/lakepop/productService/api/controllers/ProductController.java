@@ -21,44 +21,65 @@ public class ProductController {
     private final IProductMapper mapper;
 
     @GetMapping("/product/{productId}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long productId){
-        Product product = service.getProductById(productId);
-        ProductDTO productDTO = mapper.productToProductDto(product);
+    public ResponseEntity<?> getProductById(@PathVariable Long productId){
+        try {
+            Product product = service.getProductById(productId);
+            ProductDTO productDTO = mapper.productToProductDto(product);
 
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+            return new ResponseEntity<>(productDTO, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Exception: " + e.getMessage());
+        }
     }
 
     @GetMapping("/all_products")
-    public ResponseEntity<List<ProductDTO>> getAllProducts(){
-        List<Product> products = service.getAllProducts();
-        List<ProductDTO> productDTOS = products.stream()
-                .map(mapper::productToProductDto)
-                .toList();
+    public ResponseEntity<?> getAllProducts(){
+        try {
+            List<Product> products = service.getAllProducts();
+            List<ProductDTO> productDTOS = products.stream()
+                    .map(mapper::productToProductDto)
+                    .toList();
 
-        return new ResponseEntity<>(productDTOS, HttpStatus.OK);
+            return new ResponseEntity<>(productDTOS, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Exception: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/delete_product/{productId}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId){
-        service.deleteProductById(productId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> deleteProduct(@PathVariable Long productId){
+        try {
+            service.deleteProductById(productId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Exception: " + e.getMessage());
+        }
     }
 
     @PatchMapping("/update_product/{productId}")
-    public ResponseEntity<Void> updateProduct(@PathVariable Long productId, @RequestBody Map<String, Object> updates){
-        service.updateProduct(productId, updates);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @RequestBody Map<String, Object> updates){
+        try {
+            service.updateProduct(productId, updates);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Exception: " + e.getMessage());
+        }
     }
 
     @PostMapping("/create_product/")
-    public ResponseEntity<Void> createProduct(@RequestBody ProductDTO productDTO){
-        Product product = service.getProductById(productDTO.getProductId());
+    public ResponseEntity<?> createProduct(@RequestBody ProductDTO productDTO){
+        try {
+            Product product = service.getProductById(productDTO.getProductId());
 
-        if(product != null){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "product already exists.");
-        } else {
-            service.createProduct(mapper.productDtoToProduct(productDTO));
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            if(product != null){
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "product already exists.");
+            } else {
+                service.createProduct(mapper.productDtoToProduct(productDTO));
+                return new ResponseEntity<>(HttpStatus.CREATED);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Exception: " + e.getMessage());
         }
     }
 }
