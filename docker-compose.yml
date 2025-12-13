@@ -27,7 +27,7 @@ services:
     image: postgres:17.4
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=127001
+      - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=lakepop_db
     ports:
       - "5432:5432"
