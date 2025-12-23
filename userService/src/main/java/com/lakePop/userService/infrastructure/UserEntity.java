@@ -42,6 +42,6 @@ public class UserEntity {
 
     @Column(name = "orders")
     @ElementCollection
-    private List<String> orders;
+    private List<Long> orders;
 
 }

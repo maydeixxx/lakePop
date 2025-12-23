@@ -18,9 +18,9 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/createInvoice")
-    private ResponseEntity<?> createInvoice(@RequestBody Map<String, String> data) {
+    private ResponseEntity<?> createOrder(@RequestBody Map<String, String> data) {
         try {
-            String invoice = orderService.createInvoice(data.get("asset"), data.get("amount"), data.get("description"));
+            String invoice = orderService.createOrder(data.get("userId"), data.get("productId"));
             return ResponseEntity.ok(invoice);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

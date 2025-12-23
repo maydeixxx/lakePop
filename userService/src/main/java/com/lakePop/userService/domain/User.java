@@ -23,6 +23,6 @@ public class User {
 
     private Integer countOfSold; //count of sold items
 
-    private List<String> orders;
+    private List<Long> orders;
 
 }

@@ -12,4 +12,6 @@ public interface IOrderMapper {
 
     Order orderDtoToDomain(OrderDTO orderDTO);
 
+    OrderEntity orderDomainToEntity(Order order);
+
 }

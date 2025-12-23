@@ -30,6 +30,11 @@ public class UserService implements IUserService {
                 case "username" -> user.setUsername(userUpdateDTO.getNewUsername());
                 case "password" -> user.setPassword(userUpdateDTO.getNewPassword());
                 case "email" -> user.setEmail(userUpdateDTO.getNewEmail());
+                case "orders" -> {
+                    List<Long> orders = user.getOrders();
+                    orders.add(userUpdateDTO.getOrderId());
+                    user.setOrders(orders);
+                }
                 default -> throw new IllegalArgumentException("unknown field to update [" + userUpdateDTO.getField() + "]");
             }
 
