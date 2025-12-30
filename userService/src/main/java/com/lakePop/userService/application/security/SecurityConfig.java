@@ -1,6 +1,5 @@
-package com.lakePop.userService.application.auth.config;
+package com.lakePop.userService.application.security;
 
-import com.lakePop.userService.application.auth.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

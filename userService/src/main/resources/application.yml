@@ -2,6 +2,9 @@ spring:
   application:
     name: userService
 
+  config:
+    import: optional:file:../.env
+
   datasource:
     username: postgres
     password: admin
@@ -24,8 +27,8 @@ spring:
 
   jwt:
     token:
-      lifetime: 1h
-      signing-key: c2FqaGdkSllBU1VZZHV5eXVzYWRnYW9pdXNkaGl1Kyst
+      lifetime: ${JWT_LIFETIME:1h}
+      signing-key: ${JWT_SECRET_KEY:c2FqaGdkSllBU1VZZHV5eXVzYWRnYW9pdXNkaGl1Kyst}
 
 server:
   port: 8081

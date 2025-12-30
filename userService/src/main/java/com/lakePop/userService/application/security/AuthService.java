@@ -1,8 +1,7 @@
-package com.lakePop.userService.application.auth;
+package com.lakePop.userService.application.security;
 
 import com.lakePop.userService.api.models.UserAuthDTO;
 import com.lakePop.userService.api.models.UserDTO;
-import com.lakePop.userService.application.JwtService;
 import com.lakePop.userService.application.UserService;
 import com.lakePop.userService.application.interfaces.IUserMapper;
 import com.lakePop.userService.domain.User;

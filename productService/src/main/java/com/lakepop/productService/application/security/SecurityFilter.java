@@ -1,6 +1,5 @@
-package com.lakePop.userService.application.auth;
+package com.lakepop.productService.application.security;
 
-import com.lakePop.userService.application.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,11 +14,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-
+@RequiredArgsConstructor
 @Component
 @Slf4j
-@RequiredArgsConstructor
-public class JwtFilter extends OncePerRequestFilter {
+public class SecurityFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
@@ -34,7 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 username = jwtService.getUsername(jwt);
             } catch (Exception e) {
-                log.error("Error while checking jwt token: {}", e.getMessage());
+                log.error("Error while checking jwt token");
             }
         }
 
@@ -48,6 +46,6 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-
     }
+
 }

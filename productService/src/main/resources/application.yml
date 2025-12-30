@@ -1,8 +1,10 @@
 spring:
   application:
     name: productService
+  config:
+    import: optional:file:../.env
 
-# database configuration
+  # database configuration
   datasource:
     url: jdbc:postgresql://localhost:5432/lakepop_db
     username: postgres
@@ -26,6 +28,11 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       retries: 3
       acks: all
+
+  jwt:
+    token:
+      lifetime: ${JWT_LIFETIME:1h}
+      signing-key: ${JWT_SECRET_KEY:c2FqaGdkSllBU1VZZHV5eXVzYWRnYW9pdXNkaGl1Kyst}
 
 server:
   port: 8086

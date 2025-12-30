@@ -1,4 +1,4 @@
-package com.lakePop.userService.application.auth.config;
+package com.lakePop.userService.application.config;
 
 import com.lakePop.userService.application.interfaces.IRoleRepository;
 import com.lakePop.userService.infrastructure.Role;

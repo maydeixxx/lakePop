@@ -1,4 +1,4 @@
-package com.lakePop.userService.application;
+package com.lakePop.userService.application.security;
 
 import com.lakePop.userService.domain.User;
 import io.jsonwebtoken.Claims;
@@ -39,7 +39,6 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>();
         List<String> roles = user.getRoles().stream().map(role -> "ROLE_" + role.getRoleName()).toList();
 
-        claims.put("type", user.getType());
         claims.put("roles", roles);
 
         Date issuedAt = new Date();
@@ -65,14 +64,6 @@ public class JwtService {
     public List<String> getRolesFromToken(String token) {
         Claims claimsFromToken = getClaimsFromToken(token);
         return claimsFromToken.get("roles", List.class);
-    }
-
-    public String getUserType(String token) {
-        return getClaimsFromToken(token).get("type", String.class);
-    }
-
-    public String getPassword(String token) {
-        return getClaimsFromToken(token).get("password", String.class);
     }
 
     public String getUsername(String token) {
