@@ -3,6 +3,7 @@ package com.lakepop.productService.infrastructure;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -24,7 +25,7 @@ public class ProductEntity {
     private String productPhoto;
 
     @Column(nullable = false, name = "productPrice")
-    private String productPrice;
+    private BigDecimal productPrice;
 
     @Column(name = "reviews")
     @ElementCollection(fetch = FetchType.EAGER)

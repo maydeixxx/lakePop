@@ -6,7 +6,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/lakepop_db
     username: postgres
-    password: 127001
+    password: admin
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

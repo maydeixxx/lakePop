@@ -14,7 +14,7 @@ public class UserEntity {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "username")
@@ -42,6 +42,6 @@ public class UserEntity {
 
     @Column(name = "orders")
     @ElementCollection
-    private List<String> orders;
+    private List<Long> orders;
 
 }

@@ -4,6 +4,7 @@ spring:
 
 #kafka settings
   kafka:
+    bootstrap-servers: localhost:9092
     producer:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -26,7 +27,7 @@ spring:
 #api crypto bot test
 cryptoTestNet:
   apiKey: 51612:AAipd2jvLqYwSi724uB5qEmHJb89x2PiUnl
-  url: https://testnet-pay.crypt.bot/
+  url: https://testnet-pay.crypt.bot/api
 
 server:
   port: 8085

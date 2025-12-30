@@ -18,6 +18,8 @@ public class UserDTO {
 
     private String password;
 
+    private String type;
+
     @ToString.Include
     private String email;
 
@@ -25,6 +27,6 @@ public class UserDTO {
 
     private Integer countOfSold; //count of sold items
 
-    private List<String> orders;
+    private List<Long> orders;
 
 }
