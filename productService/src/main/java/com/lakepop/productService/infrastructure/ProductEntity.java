@@ -3,6 +3,8 @@ package com.lakepop.productService.infrastructure;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -13,18 +15,23 @@ public class ProductEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
-    @Column
+    @Column(nullable = false, name = "productName")
     private String productName;
 
-    @Column
+    @Column(name = "productDescription")
     private String productDescription;
 
-    @Column
+    @Column(name = "productPhoto")
     private String productPhoto;
 
-    @Column
-    private String productPrice;
+    @Column(nullable = false, name = "productPrice")
+    private BigDecimal productPrice;
 
-    @Column
+    @Column(name = "reviews")
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> reviews;
+
+    @Column(name = "productCategory")
+    @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> productCategory;
 }

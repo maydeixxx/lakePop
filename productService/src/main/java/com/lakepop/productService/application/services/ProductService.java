@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +70,39 @@ public class ProductService implements IProductService {
         return allProducts.stream()
                 .map(mapper::productEntityToProduct)
                 .toList();
+    }
+
+    /**
+     * Метод для добавления отзыва к товару
+     * @param productId id продукта
+     * @param review отзыв полученный из kafka
+     */
+    public void handleReview(Long productId, String review) {
+        if (productId == null) {
+            log.error("Product id is null");
+            throw new NullPointerException();
+        }
+
+        if (review == null) {
+            log.error("Review is null");
+            throw new NullPointerException();
+        }
+
+        try {
+            Product productById = getProductById(productId);
+            List<String> reviews = productById.getReviews();
+
+            if (reviews == null) {
+                reviews = new ArrayList<>();
+            }
+
+            reviews.add(review);
+            productById.setReviews(reviews);
+
+            productRepository.save(mapper.productToProductEntity(productById));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

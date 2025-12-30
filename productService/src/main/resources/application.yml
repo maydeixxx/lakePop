@@ -2,16 +2,30 @@ spring:
   application:
     name: productService
 
+# database configuration
   datasource:
-    url: jdbc:postgresql://localhost:5433/lakepop_db
+    url: jdbc:postgresql://localhost:5432/lakepop_db
     username: postgres
-    password: 127001
+    password: admin
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# kafka configuration
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
+      acks: all
+
 server:
   port: 8086
