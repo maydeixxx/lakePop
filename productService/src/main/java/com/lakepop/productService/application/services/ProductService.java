@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-//ДОБАВЬ КОММЕНТАРИИ И ОБРАБОТКУ ОШИБОК С ЛОГИРОВАНИЕМ ПЖ!!!!
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -35,29 +34,34 @@ public class ProductService implements IProductService {
 
     @Override
     public void updateProduct(Long productId, Map<String, Object> updates) {
-        ProductEntity product = productRepository.findByProductId(productId);
+        try {
+            ProductEntity product = productRepository.findByProductId(productId);
 
-        if(product == null){
-            throw new NullPointerException("Product with id - " + productId + "not found.");
-        }
-
-        updates.forEach((key, value) -> {
-            switch (key) {
-                case "productName" -> product.setProductName((String) value);
-                case "productDescription" -> product.setProductDescription((String) value);
-                case "productPrice" -> product.setProductPrice(BigDecimal.valueOf((Double) value));
-                case "productPhoto" -> product.setProductPhoto((String) value);
-                default -> log.error("Unknown field to update");
+            if(product == null){
+                throw new IllegalArgumentException("Product with id - " + productId + "not found.");
             }
-        });
 
-        productRepository.save(product);
+            updates.forEach((key, value) -> {
+                switch (key) {
+                    case "productName" -> product.setProductName((String) value);
+                    case "productDescription" -> product.setProductDescription((String) value);
+                    case "productPrice" -> product.setProductPrice((String) value);
+                    case "productPhoto" -> product.setProductPhoto((String) value);
+                }
+            });
+
+            productRepository.save(product);
+            log.info("Product Successfully update.");
+        } catch (Exception e) {
+            log.error("Error while updating product. Error: {}", e.getMessage());
+        }
     }
 
     @Override
     @Transactional
     public void deleteProductById(Long productId) {
         productRepository.deleteProductByProductId(productId);
+        log.info("Product successfully deleted.");
     }
 
     @Override
