@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: gateway
+
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+#            UserService
+            - id: userService
+              uri: lb://userService
+              predicates:
+                - Path= /api/userService/**
+              filters:
+                - StripPrefix=1
+
+#            reviewService
+            - id: reviewService
+              uri: lb://reviewService
+              predicates:
+                - Path= /api/reviewService/**
+              filters:
+                - StripPrefix=1
+
+#            OrderService
+            - id: orderService
+              uri: lb://orderService
+              predicates:
+                - Path= /api/orderService/**
+              filters:
+                - StripPrefix=1
+
+#            ProductService
+            - id: productService
+              uri: lb://productService
+              predicates:
+                - Path= /api/productService/**
+              filters:
+                - StripPrefix=1
+
+server:
+  port: 8080
