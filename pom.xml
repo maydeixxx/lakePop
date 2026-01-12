@@ -15,6 +15,7 @@
 	<description>platform to sell goods</description>
 	<packaging>pom</packaging>
 	<modules>
+		<module>gateway</module>
 		<module>userService</module>
 		<module>orderService</module>
 		<module>productService</module>

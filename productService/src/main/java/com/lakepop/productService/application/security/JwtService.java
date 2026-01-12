@@ -15,9 +15,6 @@ import java.util.List;
 @Service
 public class JwtService {
 
-    @Value("${spring.jwt.token.lifetime}")
-    private Duration lifetime;
-
     @Value("${spring.jwt.token.signing-key}")
     private String signingKey;
 

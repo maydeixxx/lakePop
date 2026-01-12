@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/reviewService")
+@RequestMapping("/reviewService")
 @RequiredArgsConstructor
 @Slf4j
 public class ReviewController {

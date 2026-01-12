@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("api/productService")
+@RequestMapping("/productService")
 public class ProductController {
     private final ProductService service;
     private final IProductMapper mapper;

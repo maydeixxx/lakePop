@@ -1,8 +1,10 @@
 spring:
   application:
     name: orderService
+  config:
+    import: optional:file:../.env
 
-#kafka settings
+  #kafka settings
   kafka:
     bootstrap-servers: localhost:9092
     producer:
@@ -14,7 +16,7 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
-#database settings
+  #database settings
   datasource:
     username: postgres
     password: admin
@@ -28,6 +30,12 @@ spring:
 cryptoTestNet:
   apiKey: 51612:AAipd2jvLqYwSi724uB5qEmHJb89x2PiUnl
   url: https://testnet-pay.crypt.bot/api
+
+#auth
+jwt:
+  token:
+    lifetime: ${JWT_LIFETIME:1h}
+    signing-key: ${JWT_SECRET_KEY:c2FqaGdkSllBU1VZZHV5eXVzYWRnYW9pdXNkaGl1Kyst}
 
 server:
   port: 8085
