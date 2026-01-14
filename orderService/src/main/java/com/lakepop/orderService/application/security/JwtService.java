@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -38,8 +39,8 @@ public class JwtService {
         return getClaimsFromToken(token).getSubject();
     }
 
-    public Set<String> getRoles(String token) {
-        return getClaimsFromToken(token).get("roles", Set.class);
+    public List<String> getRoles(String token) {
+        return getClaimsFromToken(token).get("roles", List.class);
     }
 
 }

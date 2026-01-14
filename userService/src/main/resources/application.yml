@@ -30,5 +30,10 @@ spring:
       lifetime: ${JWT_LIFETIME:1h}
       signing-key: ${JWT_SECRET_KEY:c2FqaGdkSllBU1VZZHV5eXVzYWRnYW9pdXNkaGl1Kyst}
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
 server:
   port: 8081

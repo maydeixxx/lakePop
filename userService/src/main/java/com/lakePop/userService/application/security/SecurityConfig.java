@@ -37,11 +37,11 @@ public class SecurityConfig {
                     return corsConfiguration;
                 }))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/userService/all").hasRole("Admin")
-                        .requestMatchers("api/userService/delete/**").hasRole("Admin")
-                        .requestMatchers("api/userService/update").authenticated()
-                        .requestMatchers("api/userService/email/**").authenticated()
-                        .requestMatchers("api/userService/id/**").authenticated()
+                        .requestMatchers("/userService/all").hasRole("Admin")
+                        .requestMatchers("/userService/delete/**").hasRole("Admin")
+                        .requestMatchers("/userService/update").authenticated()
+                        .requestMatchers("/userService/email/**").authenticated()
+                        .requestMatchers("/userService/id/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -37,11 +37,11 @@ public class SecurityConfig {
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/productService/create_product/").authenticated()
-                        .requestMatchers("/api/productService/delete_product/**").authenticated()
-                        .requestMatchers("/api/productService/update_product/**").authenticated()
-                        .requestMatchers("/api/productService/product/**").authenticated()
-                        .requestMatchers("api/productService/all_products").permitAll()
+                        .requestMatchers("/productService/create_product").authenticated()
+                        .requestMatchers("/productService/delete_product/**").authenticated()
+                        .requestMatchers("/productService/update_product/**").authenticated()
+                        .requestMatchers("/productService/product/**").authenticated()
+                        .requestMatchers("/productService/all_products").permitAll()
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);

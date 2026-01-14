@@ -63,6 +63,7 @@ public class UserService implements IUserService {
     @Override
     public void createUser(User user) {
         try {
+            user.setType("Buyer");
             repository.save(mapper.userToUserEntity(user));
         } catch (Exception e) {
             log.error("Error while saving user. Error: {}", e.getMessage());

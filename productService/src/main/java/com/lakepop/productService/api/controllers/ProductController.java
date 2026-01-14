@@ -67,7 +67,7 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/create_product/")
+    @PostMapping("/create_product")
     public ResponseEntity<?> createProduct(@RequestBody ProductDTO productDTO){
         try {
             Product product = service.getProductById(productDTO.getProductId());

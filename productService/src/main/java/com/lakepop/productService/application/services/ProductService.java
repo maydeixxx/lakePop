@@ -45,7 +45,7 @@ public class ProductService implements IProductService {
                 switch (key) {
                     case "productName" -> product.setProductName((String) value);
                     case "productDescription" -> product.setProductDescription((String) value);
-                    case "productPrice" -> product.setProductPrice((String) value);
+                    case "productPrice" -> product.setProductPrice((BigDecimal) value);
                     case "productPhoto" -> product.setProductPhoto((String) value);
                 }
             });
