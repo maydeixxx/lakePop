@@ -16,8 +16,11 @@ public class StartConfig {
 
     @Bean
     public String initRoles() {
-        if (repository.findRoleByRoleName("Admin") == null) {
-            repository.save(new Role(null, "Admin"));
+        if (repository.findRoleByRoleName("ADMIN") == null) {
+            repository.save(new Role(null, "ADMIN"));
+        }
+        if (repository.findRoleByRoleName("USER") == null) {
+            repository.save(new Role(null, "USER"));
         }
         return "";
     }

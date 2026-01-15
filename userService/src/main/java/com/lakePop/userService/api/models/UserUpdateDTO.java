@@ -9,7 +9,11 @@ public class UserUpdateDTO {
 
     private String field;
 
+    private String keyWord; //email or id
+
     private Long id;
+
+    private String email;
 
     private String newUsername;
 

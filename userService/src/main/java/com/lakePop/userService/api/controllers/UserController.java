@@ -2,6 +2,7 @@ package com.lakePop.userService.api.controllers;
 
 import com.lakePop.userService.api.models.UserAuthDTO;
 import com.lakePop.userService.api.models.UserDTO;
+import com.lakePop.userService.api.models.UserRegDTO;
 import com.lakePop.userService.api.models.UserUpdateDTO;
 import com.lakePop.userService.application.interfaces.IUserMapper;
 import com.lakePop.userService.application.UserService;
@@ -46,7 +47,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    private ResponseEntity<?> createUser(@RequestBody UserDTO user) {
+    private ResponseEntity<?> createUser(@RequestBody UserRegDTO user) {
         try {
             authService.regUser(user);
             return ResponseEntity.ok().body("User successfully saved");

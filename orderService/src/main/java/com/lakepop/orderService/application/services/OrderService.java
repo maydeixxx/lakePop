@@ -13,6 +13,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.TopicPartition;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -101,12 +102,11 @@ public class OrderService implements IOrderService {
     /**
      * метод создания заказа
      *
-     * @param userId    id пользователя, который заказывает товар
      * @param productId id товара
      * @return ссылка на оплату товара
      */
     @Override
-    public String createOrder(String userId, String productId) {
+    public String createOrder(String productId) {
         String requestId = UUID.randomUUID().toString();
 
         CompletableFuture<String> future = new CompletableFuture<>();
@@ -143,7 +143,9 @@ public class OrderService implements IOrderService {
                         .build()
         );
 
-        producerService.sendCreatedOrder(orderId, userId);
+        String email = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+
+        producerService.sendCreatedOrder(orderId, email);
 
         return createInvoice(amount, productId);
     }

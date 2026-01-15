@@ -10,8 +10,8 @@ public class ProducerService {
 
     private final KafkaTemplate<String, String> producer;
 
-    public void sendCreatedOrder(String orderId, String userId) {
-        producer.send("created_order", userId, orderId);
+    public void sendCreatedOrder(String orderId, String email) {
+        producer.send("created_order", email, orderId);
     }
 
     public void getProductPrice(String requestId, String productId) {

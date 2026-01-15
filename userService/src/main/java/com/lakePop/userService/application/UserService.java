@@ -23,7 +23,15 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public void updateUser(UserUpdateDTO userUpdateDTO) {
-        UserEntity userEntity = repository.findUserById(userUpdateDTO.getId()).orElseThrow(() -> new NullPointerException("Users not found"));
+        String keyWord = userUpdateDTO.getKeyWord();
+        UserEntity userEntity;
+
+        if (keyWord.equals("id")) {
+            userEntity = repository.findUserById(userUpdateDTO.getId()).orElseThrow(() -> new NullPointerException("Users not found"));
+        } else {
+            userEntity = repository.findUserByEmail(userUpdateDTO.getEmail()).orElseThrow(() -> new NullPointerException("Users not found"));
+        }
+
         User user = mapper.userEntityToUser(userEntity);
         try {
             switch (userUpdateDTO.getField()) {
@@ -57,18 +65,21 @@ public class UserService implements IUserService {
 
     @Override
     public User findUserByEmail(String email) {
-        return mapper.userEntityToUser(repository.findUserByEmail(email));
+        return mapper.userEntityToUser(repository.findUserByEmail(email).orElseThrow(() -> new NullPointerException("Users not found")));
     }
 
     @Override
     public void createUser(User user) {
         try {
-            user.setType("Buyer");
             repository.save(mapper.userToUserEntity(user));
         } catch (Exception e) {
             log.error("Error while saving user. Error: {}", e.getMessage());
         }
         log.info("User was successfully saved [ {} ]", user);
+    }
+
+    public Boolean existsByEmail(String email) {
+        return repository.findUserByEmail(email).isPresent();
     }
 
     @Override

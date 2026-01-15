@@ -1,4 +1,4 @@
-package com.lakePop.userService.application.security;
+package com.lakepop.reviewService.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,30 +22,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtFilter jwtFilter;
+    private final JwtFilter filter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
-
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> {
-                    var corsConfiguration = new CorsConfiguration();
-                    corsConfiguration.setAllowedOriginPatterns(List.of("*"));
-                    corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    corsConfiguration.setAllowedHeaders(List.of("*"));
-                    corsConfiguration.setAllowCredentials(true);
-                    return corsConfiguration;
+                    var corsConfig = new CorsConfiguration();
+                    corsConfig.setAllowedOriginPatterns(List.of("*"));
+                    corsConfig.setAllowedHeaders(List.of("*"));
+                    corsConfig.setAllowCredentials(true);
+                    corsConfig.setAllowedMethods(List.of("GET", "PUT", "PATCH", "DELETE", "POST", "OPTIONS"));
+                    return corsConfig;
                 }))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/userService/all").hasRole("Admin")
-                        .requestMatchers("/userService/delete/**").hasRole("Admin")
-                        .requestMatchers("/userService/update").authenticated()
-                        .requestMatchers("/userService/email/**").authenticated()
-                        .requestMatchers("/userService/id/**").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/reviewService/sendReview/**").authenticated()
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

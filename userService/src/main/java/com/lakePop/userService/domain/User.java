@@ -1,12 +1,14 @@
 package com.lakePop.userService.domain;
 
 import com.lakePop.userService.infrastructure.Role;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 import java.util.Set;
 
 @Data
+@Builder
 public class User {
 
     private Long id;

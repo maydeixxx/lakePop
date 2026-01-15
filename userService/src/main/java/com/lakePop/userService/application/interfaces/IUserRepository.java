@@ -12,7 +12,7 @@ public interface IUserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findUserById(Long id);
 
-    UserEntity findUserByEmail(String email);
+    Optional<UserEntity> findUserByEmail(String email);
 
     void deleteUserById(Long id);
 

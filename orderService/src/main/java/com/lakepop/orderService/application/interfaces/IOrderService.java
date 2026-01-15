@@ -6,7 +6,7 @@ public interface IOrderService {
 
     String createInvoice(String amount, String productId);
 
-    String createOrder(String userId, String productId);
+    String createOrder(String productId);
 
     String saveOrder(Order order);
 
