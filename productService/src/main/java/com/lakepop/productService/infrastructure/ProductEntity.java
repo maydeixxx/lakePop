@@ -15,6 +15,9 @@ public class ProductEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
+    @Column(name = "ownerEmail")
+    private String ownerEmail;
+
     @Column(nullable = false, name = "productName")
     private String productName;
 

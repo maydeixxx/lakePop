@@ -7,6 +7,7 @@ import com.lakepop.productService.domain.Product;
 import com.lakepop.productService.infrastructure.ProductEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,37 +30,64 @@ public class ProductService implements IProductService {
 
     @Override
     public void createProduct(Product product) {
+        String email = getPrincipal();
+        product.setOwnerEmail(email);
+
         productRepository.save(mapper.productToProductEntity(product));
     }
 
     @Override
     public void updateProduct(Long productId, Map<String, Object> updates) {
+        String ownerEmail = getPrincipal();
+
         try {
             ProductEntity product = productRepository.findByProductId(productId);
 
-            if(product == null){
+            if (product == null) {
                 throw new IllegalArgumentException("Product with id - " + productId + "not found.");
             }
 
-            updates.forEach((key, value) -> {
-                switch (key) {
-                    case "productName" -> product.setProductName((String) value);
-                    case "productDescription" -> product.setProductDescription((String) value);
-                    case "productPrice" -> product.setProductPrice((BigDecimal) value);
-                    case "productPhoto" -> product.setProductPhoto((String) value);
-                }
-            });
+            if (product.getOwnerEmail().equals(ownerEmail)) {
 
-            productRepository.save(product);
-            log.info("Product Successfully update.");
+                updates.forEach((key, value) -> {
+                    switch (key) {
+                        case "productName" -> product.setProductName((String) value);
+                        case "productDescription" -> product.setProductDescription((String) value);
+                        case "productPrice" -> product.setProductPrice((BigDecimal) value);
+                        case "productPhoto" -> product.setProductPhoto((String) value);
+                    }
+                });
+
+                productRepository.save(product);
+                log.info("Product Successfully update.");
+
+            } else {
+                throw new IllegalArgumentException("Чужое объявление");
+            }
         } catch (Exception e) {
             log.error("Error while updating product. Error: {}", e.getMessage());
         }
     }
 
+    public String getPrincipal() {
+        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+    }
+
     @Override
     @Transactional
     public void deleteProductById(Long productId) {
+        String ownerEmail = getPrincipal();
+
+        Product productById = getProductById(productId);
+
+        if (productById == null) {
+            throw new NullPointerException("There is no ad by id [" + productId + "]");
+        }
+
+        if (!productById.getOwnerEmail().equals(ownerEmail)) {
+            throw new IllegalArgumentException("Чужое объявление");
+        }
+
         productRepository.deleteProductByProductId(productId);
         log.info("Product successfully deleted.");
     }

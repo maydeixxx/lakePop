@@ -8,8 +8,10 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface IProductMapper {
+    @Mapping(target = "ownerEmail", source = "ownerEmail")
     ProductEntity productToProductEntity(Product product);
 
+    @Mapping(target = "ownerEmail", source = "ownerEmail")
     Product productEntityToProduct(ProductEntity product);
 
     ProductDTO productToProductDto(Product product);
