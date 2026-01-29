@@ -45,7 +45,7 @@ public class JwtService {
         Date expireTime = new Date(issuedAt.getTime() + lifeTime.toMillis());
 
         return Jwts.builder()
-                .subject(user.getEmail())
+                .subject(user.getUsername())
                 .claims(claims)
                 .issuedAt(issuedAt)
                 .expiration(expireTime)

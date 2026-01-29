@@ -1,14 +1,19 @@
 package com.lakePop.userService.application;
 
+import com.lakePop.userService.api.models.UpdateResult;
 import com.lakePop.userService.api.models.UserUpdateDTO;
+import com.lakePop.userService.application.exceptions.ConflictException;
+import com.lakePop.userService.application.exceptions.UserUpdateException;
 import com.lakePop.userService.application.interfaces.IUserMapper;
 import com.lakePop.userService.application.interfaces.IUserService;
+import com.lakePop.userService.application.security.JwtService;
 import com.lakePop.userService.domain.User;
 import com.lakePop.userService.infrastructure.UserEntity;
 import com.lakePop.userService.application.interfaces.IUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,38 +24,52 @@ import java.util.List;
 public class UserService implements IUserService {
     private final IUserRepository repository;
     private final IUserMapper mapper;
+    private final JwtService jwtService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
-    public void updateUser(UserUpdateDTO userUpdateDTO) {
-        String keyWord = userUpdateDTO.getKeyWord();
-        UserEntity userEntity;
-
-        if (keyWord.equals("id")) {
-            userEntity = repository.findUserById(userUpdateDTO.getId()).orElseThrow(() -> new NullPointerException("Users not found"));
-        } else {
-            userEntity = repository.findUserByEmail(userUpdateDTO.getEmail()).orElseThrow(() -> new NullPointerException("Users not found"));
-        }
-
+    public UpdateResult updateUser(String username, UserUpdateDTO userUpdateDTO) {
+        UserEntity userEntity = repository.findUserByUsername(username).orElseThrow(() -> new NullPointerException(String.format("User[%s] not found", username)));
         User user = mapper.userEntityToUser(userEntity);
+        String newToken = null;
+
         try {
             switch (userUpdateDTO.getField()) {
-                case "username" -> user.setUsername(userUpdateDTO.getNewUsername());
-                case "password" -> user.setPassword(userUpdateDTO.getNewPassword());
-                case "email" -> user.setEmail(userUpdateDTO.getNewEmail());
+                case "username" ->  {
+                    if (repository.existsByUsername(userUpdateDTO.getNewUsername())) {
+                        throw new ConflictException(String.format("Username [%s] already taken", userUpdateDTO.getNewUsername()));
+                    }
+
+                    user.setUsername(userUpdateDTO.getNewUsername());
+                    newToken = jwtService.generateToken(user);
+                }
+                case "password" -> {
+                    user.setPassword(passwordEncoder.encode(userUpdateDTO.getNewPassword()));
+                    newToken = jwtService.generateToken(user);
+                }
+                case "email" -> {
+                    if (repository.existsByEmail(userUpdateDTO.getNewEmail())) {
+                        throw new ConflictException(String.format("Email [%s] already taken", userUpdateDTO.getNewEmail()));
+                    }
+
+                    user.setEmail(userUpdateDTO.getNewEmail());
+                }
                 case "orders" -> {
                     List<Long> orders = user.getOrders();
                     orders.add(userUpdateDTO.getOrderId());
                     user.setOrders(orders);
                 }
-                default -> throw new IllegalArgumentException("unknown field to update [" + userUpdateDTO.getField() + "]");
+                default ->
+                        throw new IllegalArgumentException("unknown field to update [" + userUpdateDTO.getField() + "]");
             }
 
-            repository.saveAndFlush(mapper.userToUserEntity(user));
+            repository.save(mapper.userToUserEntity(user));
+
         } catch (Exception e) {
-            log.error("Error while updating user {}. Error: {}", userUpdateDTO.getId(), e.getMessage());
+            throw new UserUpdateException(String.format("Error while updating user %s. Error: %s", username, e.getMessage()));
         }
-        log.info("User was successfully updated");
+        return new UpdateResult(userUpdateDTO.getField() + " updated", newToken);
     }
 
     @Override

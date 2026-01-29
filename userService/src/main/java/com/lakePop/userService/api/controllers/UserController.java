@@ -1,9 +1,6 @@
 package com.lakePop.userService.api.controllers;
 
-import com.lakePop.userService.api.models.UserAuthDTO;
-import com.lakePop.userService.api.models.UserDTO;
-import com.lakePop.userService.api.models.UserRegDTO;
-import com.lakePop.userService.api.models.UserUpdateDTO;
+import com.lakePop.userService.api.models.*;
 import com.lakePop.userService.application.interfaces.IUserMapper;
 import com.lakePop.userService.application.UserService;
 import com.lakePop.userService.application.security.AuthService;
@@ -11,9 +8,14 @@ import com.lakePop.userService.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/userService")
@@ -26,7 +28,7 @@ public class UserController {
     private final IUserMapper mapper;
 
     @GetMapping("/all")
-    private ResponseEntity<?> findAllUsers() {
+    public ResponseEntity<?> findAllUsers() {
         try {
             List<User> allUsers = userService.findAllUsers();
             return ResponseEntity.ok(allUsers.stream().map(mapper::userToUserDTO));
@@ -36,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping("/token")
-    private ResponseEntity<?> authenticateUser(@RequestBody UserAuthDTO userData) {
+    public ResponseEntity<?> authenticateUser(@RequestBody UserAuthDTO userData) {
         String token = authService.authenticate(userData);
 
         if (token == null) {
@@ -47,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    private ResponseEntity<?> createUser(@RequestBody UserRegDTO user) {
+    public ResponseEntity<?> createUser(@RequestBody UserRegDTO user) {
         try {
             authService.regUser(user);
             return ResponseEntity.ok().body("User successfully saved");
@@ -57,17 +59,28 @@ public class UserController {
     }
 
     @PatchMapping("/update")
-    private ResponseEntity<?> updateUser(@RequestBody UserUpdateDTO userUpdateDTO) {
+    public ResponseEntity<?> updateUser(@RequestBody UserUpdateDTO userUpdateDTO) {
+        String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
         try {
-            userService.updateUser(userUpdateDTO);
-            return ResponseEntity.ok("User successfully updated");
+            UpdateResult result = userService.updateUser(username, userUpdateDTO);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", result.getMessage());
+            response.put("field", userUpdateDTO.getField());
+
+            if (result.getNewToken() != null) {
+                response.put("newToken", result.getNewToken());
+                response.put("tokenType", "Bearer");
+            }
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR: " + e.getMessage());
         }
     }
 
     @GetMapping("/id/{id}")
-    private ResponseEntity<?> findUserById(@PathVariable Long id) {
+    public ResponseEntity<?> findUserById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok().body(mapper.userToUserDTO(userService.findUserById(id)));
         } catch (Exception e) {
@@ -76,7 +89,7 @@ public class UserController {
     }
 
     @GetMapping("/email/{email}")
-    private ResponseEntity<?> findUserByEmail(@PathVariable String email) {
+    public ResponseEntity<?> findUserByEmail(@PathVariable String email) {
         try {
             return ResponseEntity.ok().body(mapper.userToUserDTO(userService.findUserByEmail(email)));
         } catch (Exception e) {
@@ -85,7 +98,7 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{id}")
-    private ResponseEntity<?> deleteUserById(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
         try {
             userService.deleteUserById(id);
             return ResponseEntity.ok().body("Successfully deleted user by id [" + id + "]");

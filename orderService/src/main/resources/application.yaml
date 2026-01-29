@@ -37,6 +37,7 @@ jwt:
     lifetime: ${JWT_LIFETIME:1h}
     signing-key: ${JWT_SECRET_KEY:c2FqaGdkSllBU1VZZHV5eXVzYWRnYW9pdXNkaGl1Kyst}
 
+#for gateway
 eureka:
   client:
     service-url:

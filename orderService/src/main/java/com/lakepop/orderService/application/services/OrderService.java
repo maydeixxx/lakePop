@@ -54,6 +54,7 @@ public class OrderService implements IOrderService {
     /**
      * Метод для создания счета на оплату (пока что тест) || валюта (USDT, TRX тд и тп)
      *
+     * @param productId id товара
      * @param amount цена товара
      * @return возвращает String ссылку на оплату счёта
      */
@@ -143,9 +144,9 @@ public class OrderService implements IOrderService {
                         .build()
         );
 
-        String email = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
 
-        producerService.sendCreatedOrder(orderId, email);
+        producerService.sendCreatedOrder(orderId, username);
 
         return createInvoice(amount, productId);
     }

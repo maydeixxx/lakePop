@@ -17,17 +17,16 @@ public class UserConsumer {
     @KafkaListener(topicPartitions = @TopicPartition(topic = "created_order", partitions = {"0"}), groupId = "userService")
     private void handleCreatedOrder(ConsumerRecord<String, String> record) {
         String orderId = record.key();
-        String email = record.value();
+        String username = record.value();
 
-        if (orderId == null || email == null) {
-            log.error("User email or order id is null");
+        if (orderId == null || username == null) {
+            log.error("Username or order id is null");
             throw new NullPointerException();
         }
 
         userService.updateUser(
+                username,
                 UserUpdateDTO.builder()
-                        .keyWord("email")
-                        .email(email)
                         .field("orders")
                         .orderId(Long.parseLong(orderId))
                         .build()

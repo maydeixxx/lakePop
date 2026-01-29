@@ -22,7 +22,6 @@ public class AuthService {
 
     private final JwtService jwtService;
     private final UserService userService;
-    private final IUserMapper mapper;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public void regUser(UserRegDTO userData) {
