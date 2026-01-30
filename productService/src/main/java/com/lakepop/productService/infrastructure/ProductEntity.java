@@ -16,7 +16,7 @@ public class ProductEntity {
     private Long productId;
 
     @Column(name = "ownerEmail")
-    private String ownerEmail;
+    private String ownerUsername;
 
     @Column(nullable = false, name = "productName")
     private String productName;

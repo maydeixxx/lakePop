@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +31,8 @@ public class ProductService implements IProductService {
 
     @Override
     public void createProduct(Product product) {
-        String email = getPrincipal();
-        product.setOwnerEmail(email);
+        String username = getPrincipal();
+        product.setOwnerUsername(username);
 
         productRepository.save(mapper.productToProductEntity(product));
     }
@@ -47,7 +48,7 @@ public class ProductService implements IProductService {
                 throw new IllegalArgumentException("Product with id - " + productId + "not found.");
             }
 
-            if (product.getOwnerEmail().equals(ownerEmail)) {
+            if (product.getOwnerUsername().equals(ownerEmail)) {
 
                 updates.forEach((key, value) -> {
                     switch (key) {
@@ -70,7 +71,7 @@ public class ProductService implements IProductService {
     }
 
     public String getPrincipal() {
-        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        return Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
     }
 
     @Override
@@ -84,7 +85,7 @@ public class ProductService implements IProductService {
             throw new NullPointerException("There is no ad by id [" + productId + "]");
         }
 
-        if (!productById.getOwnerEmail().equals(ownerEmail)) {
+        if (!productById.getOwnerUsername().equals(ownerEmail)) {
             throw new IllegalArgumentException("Чужое объявление");
         }
 

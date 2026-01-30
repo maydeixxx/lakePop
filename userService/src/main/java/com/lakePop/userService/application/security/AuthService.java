@@ -22,11 +22,12 @@ public class AuthService {
 
     private final JwtService jwtService;
     private final UserService userService;
+    private final IUserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public void regUser(UserRegDTO userData) {
 
-        if (userService.existsByEmail(userData.getEmail())) {
+        if (userRepository.existsByEmail(userData.getEmail())) {
             throw new IllegalArgumentException(
                     "User with email [%s] already exists".formatted(userData.getEmail())
             );

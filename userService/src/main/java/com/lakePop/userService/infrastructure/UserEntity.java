@@ -17,19 +17,17 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
-    @Column(name = "password")
     private String password;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "type") //buyer or shop
-    private String type;
+    private String type; //buyer or shop
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -37,11 +35,13 @@ public class UserEntity {
     )
     private Set<Role> roles; //Admin, User
 
-    @Column(name = "countOfSold")
     private Integer countOfSold; //count of sold items
 
-    @Column(name = "orders")
     @ElementCollection
+    @CollectionTable(
+            name = "users_orders",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
     private List<Long> orders;
 
 }

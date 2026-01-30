@@ -3,7 +3,9 @@ package com.lakePop.userService.application;
 import com.lakePop.userService.api.models.UpdateResult;
 import com.lakePop.userService.api.models.UserUpdateDTO;
 import com.lakePop.userService.application.exceptions.ConflictException;
+import com.lakePop.userService.application.exceptions.NewUserException;
 import com.lakePop.userService.application.exceptions.UserUpdateException;
+import com.lakePop.userService.application.exceptions.UsersNotFoundException;
 import com.lakePop.userService.application.interfaces.IUserMapper;
 import com.lakePop.userService.application.interfaces.IUserService;
 import com.lakePop.userService.application.security.JwtService;
@@ -74,17 +76,23 @@ public class UserService implements IUserService {
 
     @Override
     public List<User> findAllUsers() {
-        return repository.findAll().stream().map(mapper::userEntityToUser).toList();
+        List<User> users = repository.findAll().stream().map(mapper::userEntityToUser).toList();
+
+        if (users.isEmpty()) {
+            throw new UsersNotFoundException("users not found");
+        }
+
+        return users;
     }
 
     @Override
     public User findUserById(Long id) {
-        return mapper.userEntityToUser(repository.findUserById(id).orElseThrow(() -> new NullPointerException("User by id [" + id + "] not found")));
+        return mapper.userEntityToUser(repository.findUserById(id).orElseThrow(() -> new UsersNotFoundException("User by id [" + id + "] not found")));
     }
 
     @Override
     public User findUserByEmail(String email) {
-        return mapper.userEntityToUser(repository.findUserByEmail(email).orElseThrow(() -> new NullPointerException("Users not found")));
+        return mapper.userEntityToUser(repository.findUserByEmail(email).orElseThrow(() -> new UsersNotFoundException(String.format("User by email [ %s ] not found", email))));
     }
 
     @Override
@@ -92,13 +100,9 @@ public class UserService implements IUserService {
         try {
             repository.save(mapper.userToUserEntity(user));
         } catch (Exception e) {
-            log.error("Error while saving user. Error: {}", e.getMessage());
+            throw new NewUserException(String.format("Error while saving user. Error: %s", e.getMessage()));
         }
         log.info("User was successfully saved [ {} ]", user);
-    }
-
-    public Boolean existsByEmail(String email) {
-        return repository.findUserByEmail(email).isPresent();
     }
 
     @Override
@@ -107,7 +111,7 @@ public class UserService implements IUserService {
             User userById = findUserById(id);
             repository.delete(mapper.userToUserEntity(userById));
         } catch (Exception e) {
-            log.error("Error while deleting user {}", id);
+            throw new ConflictException(String.format("Error while deleting user %s", id));
         } finally {
             log.info("User was successfully deleted {}", id);
         }
