@@ -32,8 +32,7 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public UpdateResult updateUser(String username, UserUpdateDTO userUpdateDTO) {
-        UserEntity userEntity = repository.findUserByUsername(username).orElseThrow(() -> new NullPointerException(String.format("User[%s] not found", username)));
-        User user = mapper.userEntityToUser(userEntity);
+        UserEntity user = repository.findUserByUsername(username).orElseThrow(() -> new UsersNotFoundException(String.format("User[%s] not found", username)));
         String newToken = null;
 
         try {
@@ -44,11 +43,11 @@ public class UserService implements IUserService {
                     }
 
                     user.setUsername(userUpdateDTO.getNewUsername());
-                    newToken = jwtService.generateToken(user);
+                    newToken = jwtService.generateToken(mapper.userEntityToUser(user));
                 }
                 case "password" -> {
                     user.setPassword(passwordEncoder.encode(userUpdateDTO.getNewPassword()));
-                    newToken = jwtService.generateToken(user);
+                    newToken = jwtService.generateToken(mapper.userEntityToUser(user));
                 }
                 case "email" -> {
                     if (repository.existsByEmail(userUpdateDTO.getNewEmail())) {
@@ -65,8 +64,6 @@ public class UserService implements IUserService {
                 default ->
                         throw new IllegalArgumentException("unknown field to update [" + userUpdateDTO.getField() + "]");
             }
-
-            repository.save(mapper.userToUserEntity(user));
 
         } catch (Exception e) {
             throw new UserUpdateException(String.format("Error while updating user %s. Error: %s", username, e.getMessage()));
@@ -96,6 +93,11 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public User findUserByUsername(String username) {
+        return mapper.userEntityToUser(repository.findUserByUsername(username).orElseThrow(() -> new UsersNotFoundException(String.format("User %s not found", username))));
+    }
+
+    @Override
     public void createUser(User user) {
         try {
             repository.save(mapper.userToUserEntity(user));
@@ -108,12 +110,38 @@ public class UserService implements IUserService {
     @Override
     public void deleteUserById(Long id) {
         try {
-            User userById = findUserById(id);
-            repository.delete(mapper.userToUserEntity(userById));
+            repository.delete(repository.findUserById(id).orElseThrow(() -> new UsersNotFoundException(String.format("User by id %s not found", id))));
         } catch (Exception e) {
             throw new ConflictException(String.format("Error while deleting user %s", id));
         } finally {
             log.info("User was successfully deleted {}", id);
         }
+    }
+
+    @Override
+    @Transactional
+    public void addOrder(String username, Long orderId) {
+        UserEntity userByUsername = repository.findUserByUsername(username).orElseThrow(() -> new UsersNotFoundException(String.format("User %s not found", username)));
+        List<Long> orders = userByUsername.getOrders();
+
+        if (orders.contains(orderId)) {
+            throw new ConflictException(String.format("Order [ %s ] already exists", orderId));
+        }
+
+        orders.add(orderId);
+        userByUsername.setOrders(orders);
+    }
+
+    @Override
+    @Transactional
+    public void removeOrder(String username, Long orderId) {
+        UserEntity user = repository.findUserByUsername(username).orElseThrow(() -> new UsersNotFoundException(String.format("User %s not found", username)));
+        List<Long> orders = user.getOrders();
+
+        if (!orders.contains(orderId)) {
+            throw new ConflictException(String.format("User dont have order %s", orderId));
+        }
+
+        orders.removeIf(order -> order.equals(orderId));
     }
 }

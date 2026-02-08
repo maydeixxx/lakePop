@@ -1,6 +1,5 @@
 package com.lakePop.userService.application;
 
-import com.lakePop.userService.api.models.UserUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -19,17 +18,19 @@ public class UserConsumer {
         String orderId = record.key();
         String username = record.value();
 
-        if (orderId == null || username == null) {
-            log.error("Username or order id is null");
+        if (username == null) {
+            log.error("Username is null");
             throw new NullPointerException();
         }
 
-        userService.updateUser(
+        if (orderId == null) {
+            log.error("Order id is null");
+            throw new NullPointerException();
+        }
+
+        userService.addOrder(
                 username,
-                UserUpdateDTO.builder()
-                        .field("orders")
-                        .orderId(Long.parseLong(orderId))
-                        .build()
+                Long.valueOf(orderId)
         );
     }
 

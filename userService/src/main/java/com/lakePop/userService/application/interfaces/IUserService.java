@@ -19,8 +19,14 @@ public interface IUserService {
 
     User findUserByEmail(String email);
 
+    User findUserByUsername(String username);
+
     void createUser(User user);
 
     void deleteUserById(Long id);
+
+    void addOrder(String username, Long orderId);
+
+    void removeOrder(String username, Long orderId);
 
 }

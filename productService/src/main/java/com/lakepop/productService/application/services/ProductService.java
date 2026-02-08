@@ -38,8 +38,9 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    @Transactional
     public void updateProduct(Long productId, Map<String, Object> updates) {
-        String ownerEmail = getPrincipal();
+        String userName = getPrincipal();
 
         try {
             ProductEntity product = productRepository.findByProductId(productId);
@@ -48,7 +49,7 @@ public class ProductService implements IProductService {
                 throw new IllegalArgumentException("Product with id - " + productId + "not found.");
             }
 
-            if (product.getOwnerUsername().equals(ownerEmail)) {
+            if (product.getOwnerUsername().equals(userName)) {
 
                 updates.forEach((key, value) -> {
                     switch (key) {
@@ -59,9 +60,7 @@ public class ProductService implements IProductService {
                     }
                 });
 
-                productRepository.save(product);
                 log.info("Product Successfully update.");
-
             } else {
                 throw new IllegalArgumentException("Чужое объявление");
             }
@@ -77,15 +76,14 @@ public class ProductService implements IProductService {
     @Override
     @Transactional
     public void deleteProductById(Long productId) {
-        String ownerEmail = getPrincipal();
-
+        String userName = getPrincipal();
         Product productById = getProductById(productId);
 
         if (productById == null) {
             throw new NullPointerException("There is no ad by id [" + productId + "]");
         }
 
-        if (!productById.getOwnerUsername().equals(ownerEmail)) {
+        if (!productById.getOwnerUsername().equals(userName)) {
             throw new IllegalArgumentException("Чужое объявление");
         }
 
