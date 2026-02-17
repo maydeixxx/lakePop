@@ -4,9 +4,7 @@ import com.lakepop.orderService.application.models.Order;
 
 public interface IOrderService {
 
-    String createInvoice(String amount, String productId);
-
-    String createOrder(String productId);
+    String createOrder(String productId, String username);
 
     String saveOrder(Order order);
 

@@ -1,4 +1,4 @@
-package com.lakepop.productService.domain;
+package com.lakepop.productService.application.models;
 
 import lombok.Data;
 

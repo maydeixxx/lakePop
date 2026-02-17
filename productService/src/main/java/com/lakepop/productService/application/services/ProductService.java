@@ -3,7 +3,7 @@ package com.lakepop.productService.application.services;
 import com.lakepop.productService.application.interfaces.IProductMapper;
 import com.lakepop.productService.application.interfaces.IProductRepository;
 import com.lakepop.productService.application.interfaces.IProductService;
-import com.lakepop.productService.domain.Product;
+import com.lakepop.productService.application.models.Product;
 import com.lakepop.productService.infrastructure.ProductEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

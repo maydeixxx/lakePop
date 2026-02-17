@@ -1,7 +1,6 @@
 package com.lakepop.productService.application.interfaces;
 
-import com.lakepop.productService.api.dto.ProductDTO;
-import com.lakepop.productService.domain.Product;
+import com.lakepop.productService.application.models.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

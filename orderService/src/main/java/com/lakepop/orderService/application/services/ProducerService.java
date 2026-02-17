@@ -1,5 +1,6 @@
 package com.lakepop.orderService.application.services;
 
+import com.lakepop.orderService.application.models.events.InvoiceCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -8,14 +9,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ProducerService {
 
-    private final KafkaTemplate<String, String> producer;
+    private final KafkaTemplate<String, InvoiceCreatedEvent> invoiceProducer;
+    private final KafkaTemplate<String, String> simpleProducer;
 
     public void sendCreatedOrder(String orderId, String username) {
-        producer.send("created_order", username, orderId);
+        simpleProducer.send("created_order", username, orderId);
     }
 
-    public void getProductPrice(String requestId, String productId) {
-        producer.send("get_product_price", requestId, productId);
+    public void sendInvoiceCreated(String orderId, InvoiceCreatedEvent event) {
+        invoiceProducer.send("created_invoice", orderId, event);
+    }
+
+    public void getProductPrice(String orderId, String productId) {
+        simpleProducer.send("get_product_price", orderId, productId);
     }
 
 }

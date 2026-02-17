@@ -3,7 +3,7 @@ package com.lakepop.productService.api.controllers;
 import com.lakepop.productService.api.dto.ProductDTO;
 import com.lakepop.productService.application.interfaces.IProductMapper;
 import com.lakepop.productService.application.services.ProductService;
-import com.lakepop.productService.domain.Product;
+import com.lakepop.productService.application.models.Product;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

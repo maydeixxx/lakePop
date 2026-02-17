@@ -1,5 +1,6 @@
 package com.lakepop.orderService.infrastructure;
 
+import com.lakepop.orderService.application.models.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,16 +16,17 @@ public class OrderEntity {
     @Column(name = "id", unique = true)
     private Long id;
 
-    @Column(name = "date")
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
+    private String payUrl;
+
     private LocalDateTime timeStamp;
 
-    @Column(name = "productId")
     private Long productId;
 
-    @Column(name = "amount")
     private BigDecimal amount;
 
-    @Column(name = "currency")
     private String currency;
 
 }

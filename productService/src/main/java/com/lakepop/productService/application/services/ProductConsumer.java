@@ -1,5 +1,6 @@
 package com.lakepop.productService.application.services;
 
+import com.lakepop.productService.application.models.PriceResponseEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -44,28 +45,29 @@ public class ProductConsumer {
         }
     }
 
-    /**
-     * Метод для обработки запроса на получение цены товара
-     * @param record request id для future и product id для поиска цены
-     */
+
     @KafkaListener(topicPartitions = @TopicPartition(topic = "get_product_price", partitions = {"0"}), groupId = "productService")
     private void handleProductPriceRequest(ConsumerRecord<String, String> record) {
-        String requestId = record.key();
+        String orderId = record.key();
         String productId = record.value();
 
-        if (requestId == null) {
-            throw new NullPointerException("Request id is null");
+        if (orderId == null) {
+            throw new NullPointerException("orderId id is null");
         }
 
         if (productId == null) {
-            throw new NullPointerException("Request id or product id is null");
+            throw new NullPointerException("product id is null");
         }
 
         log.info("Получили сообщение {}", record);
 
         BigDecimal productPrice = productService.getProductById(Long.parseLong(productId)).getProductPrice();
 
-        producer.sendResponseProductPrice(requestId, String.valueOf(productPrice));
+        producer.sendResponseProductPrice(productId, PriceResponseEvent.builder()
+                                                    .amount(productPrice)
+                                                    .orderId(orderId)
+                                                    .build()
+        );
     }
 
 

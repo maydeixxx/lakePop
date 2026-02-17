@@ -10,7 +10,7 @@ import java.util.Set;
 public class ProductDTO {
     private Long productId;
 
-    private String ownerEmail;
+    private String ownerUsername;
 
     private String productName;
 
