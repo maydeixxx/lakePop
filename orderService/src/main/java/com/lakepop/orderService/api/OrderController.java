@@ -18,14 +18,12 @@ public class OrderController {
     @PostMapping("/createInvoice/{productId}")
     private ResponseEntity<?> createOrder(@PathVariable String productId) {
         String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
-
         try {
-            String invoice = orderService.createOrder(productId, username);
-            return ResponseEntity.ok(invoice);
+            String orderId = orderService.createOrder(productId, username);
+            return ResponseEntity.ok("Id заказа - " + orderId);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
 
 }

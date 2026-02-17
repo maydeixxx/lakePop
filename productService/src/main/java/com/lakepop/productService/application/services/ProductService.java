@@ -1,5 +1,6 @@
 package com.lakepop.productService.application.services;
 
+import com.lakepop.productService.application.exceptions.ProductNotFoundException;
 import com.lakepop.productService.application.interfaces.IProductMapper;
 import com.lakepop.productService.application.interfaces.IProductRepository;
 import com.lakepop.productService.application.interfaces.IProductService;
@@ -26,7 +27,11 @@ public class ProductService implements IProductService {
 
     @Override
     public Product getProductById(Long productId) {
-        return mapper.productEntityToProduct(productRepository.findByProductId(productId));
+        return mapper.productEntityToProduct(
+                productRepository
+                        .findByProductId(productId)
+                        .orElseThrow(() -> new ProductNotFoundException(String.format("product by id - %s not found", productId)))
+        );
     }
 
     @Override
@@ -43,7 +48,7 @@ public class ProductService implements IProductService {
         String userName = getPrincipal();
 
         try {
-            ProductEntity product = productRepository.findByProductId(productId);
+            ProductEntity product = productRepository.findByProductId(productId).orElseThrow(() -> new ProductNotFoundException(String.format("product by id - %s not found", productId)));
 
             if (product == null) {
                 throw new IllegalArgumentException("Product with id - " + productId + "not found.");

@@ -21,7 +21,7 @@ public class ProductController {
     private final IProductMapper mapper;
 
     @GetMapping("/product/{productId}")
-    public ResponseEntity<?> getProductById(@PathVariable Long productId){
+    public ResponseEntity<?> getProductById(@PathVariable Long productId) {
         try {
             Product product = service.getProductById(productId);
             ProductDTO productDTO = mapper.productToProductDto(product);
@@ -34,7 +34,7 @@ public class ProductController {
     }
 
     @GetMapping("/all_products")
-    public ResponseEntity<?> getAllProducts(){
+    public ResponseEntity<?> getAllProducts() {
         try {
             List<Product> products = service.getAllProducts();
             List<ProductDTO> productDTOS = products.stream()
@@ -48,7 +48,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/delete_product/{productId}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long productId){
+    public ResponseEntity<?> deleteProduct(@PathVariable Long productId) {
         try {
             service.deleteProductById(productId);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -58,7 +58,7 @@ public class ProductController {
     }
 
     @PatchMapping("/update_product/{productId}")
-    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @RequestBody Map<String, Object> updates){
+    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @RequestBody Map<String, Object> updates) {
         try {
             service.updateProduct(productId, updates);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -68,16 +68,10 @@ public class ProductController {
     }
 
     @PostMapping("/create_product")
-    public ResponseEntity<?> createProduct(@RequestBody ProductDTO productDTO){
+    public ResponseEntity<?> createProduct(@RequestBody ProductDTO productDTO) {
         try {
-            Product product = service.getProductById(productDTO.getProductId());
-
-            if(product != null){
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "product already exists.");
-            } else {
-                service.createProduct(mapper.productDtoToProduct(productDTO));
-                return new ResponseEntity<>(HttpStatus.CREATED);
-            }
+            service.createProduct(mapper.productDtoToProduct(productDTO));
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Exception: " + e.getMessage());
         }
