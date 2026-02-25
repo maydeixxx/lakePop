@@ -1,5 +1,6 @@
 package com.lakepop.orderService.application.configs;
 
+import com.lakepop.orderService.application.models.Order;
 import com.lakepop.orderService.application.models.events.InvoiceCreatedEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -56,4 +57,24 @@ public class KafkaProducerConfig {
         return new KafkaTemplate<>(stringProducerFactory());
     }
 
+    @Bean
+    public ProducerFactory<String, Order> orderProducerFactory() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ProducerConfig.ACKS_CONFIG, "all");
+        props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, 15000);
+        props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, 5000);
+        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JacksonJsonSerializer.class);
+
+        props.put(JacksonJsonSerializer.ADD_TYPE_INFO_HEADERS, false);
+
+        return new DefaultKafkaProducerFactory<>(props);
+    }
+
+    @Bean
+    public KafkaTemplate<String, Order> orderKafkaTemplate() {
+        return new KafkaTemplate<>(orderProducerFactory());
+    }
 }

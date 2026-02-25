@@ -2,11 +2,12 @@ package com.lakePop.userService.api.controllers;
 
 import com.lakePop.userService.api.models.*;
 import com.lakePop.userService.application.interfaces.IUserMapper;
-import com.lakePop.userService.application.UserService;
+import com.lakePop.userService.application.services.UserService;
 import com.lakePop.userService.application.security.AuthService;
 import com.lakePop.userService.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -103,6 +104,39 @@ public class UserController {
             return ResponseEntity.ok().body("Successfully deleted user by id [" + id + "]");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error while deleting user by id [" + id + "]");
+        }
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<?> getUserOrders() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        try {
+            List<Long> orderIds = userService.getOrderIds(username);
+            return ResponseEntity.ok(String.format("Your orders: %s", orderIds));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error in getting order ids");
+        }
+    }
+
+    @GetMapping("/order/{id}")
+    public ResponseEntity<?> getOrderBody(@PathVariable Long id) {
+        try {
+            OrderDTO order = userService.getOrderInfoById(id);
+            return ResponseEntity.ok(String.format("Order %s: %s", id, order));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error in getting order body");
+        }
+    }
+
+    @PatchMapping("/removeOrder/{id}")
+    public ResponseEntity<?> removeOrder(@PathVariable Long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        try {
+            userService.removeOrder(username, id);
+            return ResponseEntity.ok(String.format("Order %s deleted", id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error while deleting order");
         }
     }
 

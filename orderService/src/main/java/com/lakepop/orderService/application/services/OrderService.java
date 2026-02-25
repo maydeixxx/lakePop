@@ -65,6 +65,13 @@ public class OrderService implements IOrderService {
         return saved.getId().toString();
     }
 
+    @Override
+    public Order findOrderById(Long id) {
+        return orderMapper.orderEntityToDomain(orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException(String.format("Order by id %s not found", id)))
+        );
+    }
+
     @KafkaListener(
             topicPartitions = @TopicPartition(topic = "created_invoice", partitions = {"0"}),
             groupId = "orderService",
@@ -82,6 +89,28 @@ public class OrderService implements IOrderService {
         orderEntity.setAmount(amount);
         orderEntity.setOrderStatus(OrderStatus.AWAITING_PAYMENT);
         orderEntity.setPayUrl(payUrl);
+    }
+
+    @KafkaListener(
+            topicPartitions = @TopicPartition(topic = "requestOrderId", partitions = {"0"}),
+            groupId = "orderService",
+            containerFactory = "longKafkaListenerContainerFactory"
+    )
+    public void handleOrderIdRequest(ConsumerRecord<String, Long> record) {
+        String requestId = record.key();
+        Long orderId = record.value();
+
+        if (requestId == null) {
+            log.error("Request id is null");
+        }
+
+        if (orderId == null) {
+            log.error("orderId is null");
+        }
+
+        Order orderById = findOrderById(orderId);
+
+        producerService.sendResponseOrderId(requestId, orderById);
     }
 
 }

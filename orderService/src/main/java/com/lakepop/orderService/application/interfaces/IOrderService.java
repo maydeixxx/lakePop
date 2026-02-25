@@ -8,4 +8,6 @@ public interface IOrderService {
 
     String saveOrder(Order order);
 
+    Order findOrderById(Long id);
+
 }

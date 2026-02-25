@@ -1,5 +1,6 @@
 package com.lakePop.userService.application.interfaces;
 
+import com.lakePop.userService.api.models.OrderDTO;
 import com.lakePop.userService.api.models.UpdateResult;
 import com.lakePop.userService.api.models.UserUpdateDTO;
 import com.lakePop.userService.domain.User;
@@ -28,5 +29,9 @@ public interface IUserService {
     void addOrder(String username, Long orderId);
 
     void removeOrder(String username, Long orderId);
+
+    List<Long> getOrderIds(String username);
+
+    OrderDTO getOrderInfoById(Long id);
 
 }

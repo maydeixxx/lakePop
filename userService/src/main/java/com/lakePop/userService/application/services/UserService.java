@@ -1,5 +1,6 @@
-package com.lakePop.userService.application;
+package com.lakePop.userService.application.services;
 
+import com.lakePop.userService.api.models.OrderDTO;
 import com.lakePop.userService.api.models.UpdateResult;
 import com.lakePop.userService.api.models.UserUpdateDTO;
 import com.lakePop.userService.application.exceptions.ConflictException;
@@ -15,10 +16,17 @@ import com.lakePop.userService.application.interfaces.IUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.TopicPartition;
+import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +36,8 @@ public class UserService implements IUserService {
     private final IUserMapper mapper;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final UserProducer userProducer;
+    private final Map<String, CompletableFuture<OrderDTO>> pendingRequests = new ConcurrentHashMap<>();
 
     @Override
     @Transactional
@@ -37,7 +47,7 @@ public class UserService implements IUserService {
 
         try {
             switch (userUpdateDTO.getField()) {
-                case "username" ->  {
+                case "username" -> {
                     if (repository.existsByUsername(userUpdateDTO.getNewUsername())) {
                         throw new ConflictException(String.format("Username [%s] already taken", userUpdateDTO.getNewUsername()));
                     }
@@ -143,5 +153,65 @@ public class UserService implements IUserService {
         }
 
         orders.removeIf(order -> order.equals(orderId));
+    }
+
+    @Override
+    public List<Long> getOrderIds(String username) {
+        User user = findUserByUsername(username);
+        return user.getOrders();
+    }
+
+    @Override
+    public OrderDTO getOrderInfoById(Long id) {
+        String requestId = UUID.randomUUID().toString();
+        CompletableFuture<OrderDTO> request = new CompletableFuture<>();
+        pendingRequests.put(requestId, request);
+        userProducer.requestOrderBody(requestId, id);
+
+        OrderDTO orderDTO;
+        try {
+            orderDTO = request.get(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            log.error("Catched interruptedException: {}", e.getMessage());
+            pendingRequests.remove(requestId);
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            log.error("Catched executionException: {}", e.getMessage());
+            pendingRequests.remove(requestId);
+            throw new RuntimeException(e);
+        } catch (TimeoutException e) {
+            log.error("Catched timeoutException: {}", e.getMessage());
+            pendingRequests.remove(requestId);
+            throw new RuntimeException(e);
+        }
+
+        return orderDTO;
+    }
+
+    @KafkaListener(
+            topicPartitions = @TopicPartition(topic = "responseOrderId", partitions = {"0"}),
+            groupId = "userService",
+            containerFactory = "orderDTOConcurrentKafkaListenerContainerFactory"
+    )
+    public void handleOrderBody(ConsumerRecord<String, OrderDTO> record) {
+        String requestId = record.key();
+        OrderDTO order = record.value();
+
+        if (requestId == null) {
+            log.error("Request id is null");
+        }
+
+        if (order == null) {
+            log.error("Received order is null");
+        }
+
+        CompletableFuture<OrderDTO> orderDTOCompletableFuture = pendingRequests.get(requestId);
+
+        if (orderDTOCompletableFuture != null) {
+            orderDTOCompletableFuture.complete(order);
+        } else {
+            log.error("Didnt receive order");
+        }
+
     }
 }

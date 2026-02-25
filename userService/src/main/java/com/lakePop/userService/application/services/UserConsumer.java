@@ -1,4 +1,4 @@
-package com.lakePop.userService.application;
+package com.lakePop.userService.application.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

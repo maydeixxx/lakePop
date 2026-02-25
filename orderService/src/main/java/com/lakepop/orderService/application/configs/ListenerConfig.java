@@ -1,9 +1,11 @@
 package com.lakepop.orderService.application.configs;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.lakepop.orderService.application.models.Order;
 import com.lakepop.orderService.application.models.events.InvoiceCreatedEvent;
 import com.lakepop.orderService.application.models.events.PriceResponseEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.serialization.LongDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -67,6 +69,28 @@ public class ListenerConfig {
         ConcurrentKafkaListenerContainerFactory<String, InvoiceCreatedEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(invoiceCreatedEventConsumerFactory);
+
+        return factory;
+    }
+
+    @Bean
+    public ConsumerFactory<String, Long> orderConsumerFactory() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, Long.class);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+
+        return new DefaultKafkaConsumerFactory<>(
+                props,
+                new StringDeserializer(),
+                new LongDeserializer()
+        );
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Long> longKafkaListenerContainerFactory(ConsumerFactory<String, Long> longConsumerFactory) {
+        ConcurrentKafkaListenerContainerFactory<String, Long> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(longConsumerFactory);
 
         return factory;
     }
