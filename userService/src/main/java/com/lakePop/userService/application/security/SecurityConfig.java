@@ -42,6 +42,8 @@ public class SecurityConfig {
                         .requestMatchers("/userService/update").authenticated()
                         .requestMatchers("/userService/email/**").authenticated()
                         .requestMatchers("/userService/id/**").authenticated()
+                        .requestMatchers("/userService/orders").authenticated()
+                        .requestMatchers("/userService/order/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

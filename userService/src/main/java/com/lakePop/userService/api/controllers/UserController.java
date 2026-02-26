@@ -24,7 +24,6 @@ import java.util.Objects;
 public class UserController {
 
     private final UserService userService;
-    private final AuthService authService;
     private final IUserMapper mapper;
 
     @GetMapping("/all")
@@ -32,27 +31,6 @@ public class UserController {
         try {
             List<User> allUsers = userService.findAllUsers();
             return ResponseEntity.ok(allUsers.stream().map(mapper::userToUserDTO));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("ERROR: " + e.getMessage());
-        }
-    }
-
-    @PostMapping("/token")
-    public ResponseEntity<?> authenticateUser(@RequestBody UserAuthDTO userData) {
-        String token = authService.authenticate(userData);
-
-        if (token == null) {
-            return ResponseEntity.badRequest().body("Error while login");
-        }
-
-        return ResponseEntity.ok(token);
-    }
-
-    @PostMapping("/create")
-    public ResponseEntity<?> createUser(@RequestBody UserRegDTO user) {
-        try {
-            authService.regUser(user);
-            return ResponseEntity.ok().body("User successfully saved");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR: " + e.getMessage());
         }
