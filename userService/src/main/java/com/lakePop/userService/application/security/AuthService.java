@@ -2,6 +2,7 @@ package com.lakePop.userService.application.security;
 
 import com.lakePop.userService.api.models.UserAuthDTO;
 import com.lakePop.userService.api.models.UserRegDTO;
+import com.lakePop.userService.application.exceptions.AuthException;
 import com.lakePop.userService.application.services.UserService;
 import com.lakePop.userService.application.interfaces.IUserRepository;
 import com.lakePop.userService.domain.User;
@@ -24,9 +25,8 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     public void regUser(UserRegDTO userData) {
-
         if (userRepository.existsByEmail(userData.getEmail())) {
-            throw new IllegalArgumentException(
+            throw new AuthException(
                     "User with email [%s] already exists".formatted(userData.getEmail())
             );
         }
@@ -49,11 +49,11 @@ public class AuthService {
         User userByEmail = userService.findUserByEmail(userData.getEmail());
 
         if (userByEmail == null) {
-            throw new IllegalArgumentException(String.format("User with email [%s] not found", userData.getEmail()));
+            throw new AuthException(String.format("User with email [%s] not found", userData.getEmail()));
         }
 
         if (!passwordEncoder.matches(userData.getPassword(), userByEmail.getPassword())) {
-            throw new IllegalArgumentException(String.format("Password for [%s] is wrong", userData.getEmail()));
+            throw new AuthException(String.format("Password for [%s] is wrong", userData.getEmail()));
         }
 
         return jwtService.generateToken(userByEmail);
