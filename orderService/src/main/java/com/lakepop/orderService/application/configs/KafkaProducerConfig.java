@@ -49,7 +49,11 @@ public class KafkaProducerConfig {
         props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, 5000);
         props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
-        return new DefaultKafkaProducerFactory<>(props);
+        return new DefaultKafkaProducerFactory<>(
+                props,
+                new StringSerializer(),
+                new StringSerializer()
+        );
     }
 
     @Bean

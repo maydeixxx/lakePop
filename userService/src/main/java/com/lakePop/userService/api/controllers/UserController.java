@@ -115,7 +115,7 @@ public class UserController {
             List<Long> orderIds = userService.getOrderIds(username);
             return ResponseEntity.ok(String.format("Your orders: %s", orderIds));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error in getting order ids");
+            return ResponseEntity.badRequest().body("Error in getting order ids: " + e.getMessage());
         }
     }
 

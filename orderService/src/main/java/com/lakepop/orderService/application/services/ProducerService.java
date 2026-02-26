@@ -31,7 +31,7 @@ public class ProducerService {
     }
 
     public void sendCreatedOrder(String orderId, String username) {
-        stringKafkaTemplate.send("created_order", username, orderId);
+        stringKafkaTemplate.send("created_order", orderId, username);
     }
 
     public void sendInvoiceCreated(String orderId, InvoiceCreatedEvent event) {
