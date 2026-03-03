@@ -26,4 +26,15 @@ public class OrderController {
         }
     }
 
+    @DeleteMapping("/deleteOrder/{orderId}")
+    private ResponseEntity<?> deleteOrderById(@PathVariable Long orderId) {
+        String ownerName = SecurityContextHolder.getContext().getAuthentication().getName();
+        try {
+            orderService.deleteOrder(ownerName, orderId);
+            return ResponseEntity.ok(String.format("Order %s successfully deleted", orderId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error in deleteOrder: " + e.getMessage());
+        }
+    }
+
 }

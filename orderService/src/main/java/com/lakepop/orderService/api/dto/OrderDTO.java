@@ -27,4 +27,6 @@ public class OrderDTO {
 
     private String currency;
 
+    private String ownerName;
+
 }

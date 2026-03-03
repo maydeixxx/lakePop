@@ -10,4 +10,6 @@ public interface IOrderService {
 
     Order findOrderById(Long id);
 
+    void deleteOrder(String ownerName, Long id);
+
 }

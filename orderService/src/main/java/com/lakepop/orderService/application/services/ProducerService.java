@@ -46,4 +46,8 @@ public class ProducerService {
         orderKafkaTemplate.send("responseOrderId", requestId, order);
     }
 
+    public void sendDeletedOrderEvent(String ownerName, String id) {
+        stringKafkaTemplate.send("deleted_order", ownerName, id);
+    }
+
 }

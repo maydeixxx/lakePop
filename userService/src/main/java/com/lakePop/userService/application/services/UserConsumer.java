@@ -44,4 +44,29 @@ public class UserConsumer {
         }
     }
 
+    /**
+     * Обработка удаления order
+     * @param record
+     */
+    @KafkaListener(
+            topicPartitions = @TopicPartition(topic = "deleted_order", partitions = {"0"}),
+            groupId = "userService",
+            containerFactory = "stringKafkaListenerContainerFactory"
+    )
+    private void handleDeletedOrderEvent(ConsumerRecord<String, String> record) {
+        String orderId = record.value();
+        String userName = record.key();
+
+        if (orderId == null) {
+            throw new KafkaException("Order id is null");
+        }
+
+        if (userName == null) {
+            throw new KafkaException("username is null");
+        }
+
+        userService.removeOrder(userName, Long.parseLong(orderId));
+    }
+
+
 }

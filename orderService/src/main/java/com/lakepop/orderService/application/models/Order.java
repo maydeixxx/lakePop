@@ -27,4 +27,6 @@ public class Order {
 
     private String currency;
 
+    private String ownerName;
+
 }

@@ -30,4 +30,6 @@ public class OrderEntity {
 
     private String currency;
 
+    private String ownerName;
+
 }
