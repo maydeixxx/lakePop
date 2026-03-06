@@ -16,6 +16,10 @@ public class UserConsumer {
 
     private final UserService userService;
 
+    /**
+     * Обработка созданного order
+     * @param record модель из orderService
+     */
     @KafkaListener(
             topicPartitions = @TopicPartition(topic = "created_order", partitions = {"0"}),
             groupId = "userService",
@@ -46,7 +50,7 @@ public class UserConsumer {
 
     /**
      * Обработка удаления order
-     * @param record
+     * @param record record model
      */
     @KafkaListener(
             topicPartitions = @TopicPartition(topic = "deleted_order", partitions = {"0"}),
